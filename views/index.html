@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Team Optimizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">NBA Team Optimizer</h1>
+            
+            <div class="flex items-center space-x-2 bg-white px-4 py-2 rounded-md shadow-sm">
+                <span class="text-sm font-medium text-gray-700">Matchday:</span>
+                <span id="matchday" class="text-sm font-bold text-blue-600"></span>
+            </div>
+        </div>
+        
+        <button id="optimizeButton" 
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg 
+                       shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+            Get Optimized Team
+        </button>
+        
+        <div id="optimizedTeam" class="mt-8">
+            <!-- Results will be displayed here -->
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html> 
