@@ -5,7 +5,9 @@ const Player = require('../models/player');
 
 router.get('/optimize', async (req, res) => {
     try {
-        const matchday = req.query.matchday || 677; // Default to 677 if not provided
+        const matchday = req.query.matchday || 677;
+        const maxCredits = parseFloat(req.query.maxCredits) || 95; // Default to 95 if not provided
+        
         const playersData = await dunkestApi.getPlayers(matchday);
         
         if (!playersData || !Array.isArray(playersData)) {
@@ -13,7 +15,7 @@ router.get('/optimize', async (req, res) => {
         }
 
         const players = playersData.map(data => new Player(data));
-        const optimizedTeam = optimizeTeam(players);
+        const optimizedTeam = optimizeTeam(players, maxCredits);
         
         res.json({
             team: {
@@ -45,10 +47,11 @@ router.get('/currentMatchday', async (req, res) => {
     }
 });
 
-function optimizeTeam(players) {
-    const MAX_BUDGET = 95;
+function optimizeTeam(players, maxCredits = 95) {
+    const MAX_BUDGET = maxCredits;
     const TEAM_SIZE = 10;
     const MIN_REMAINING = 0.5;
+    const PLAYERS_BUDGET = maxCredits * 0.95;
 
     try {
         // Separate coaches from players
@@ -99,7 +102,7 @@ function optimizeTeam(players) {
 
         // Helper function to add a player to the team
         function addPlayer(playerEntry) {
-            if (totalCredits + playerEntry.player.price <= MAX_BUDGET) {
+            if (totalCredits + playerEntry.player.price <= PLAYERS_BUDGET) {
                 team.push(playerEntry.player);
                 totalCredits += playerEntry.player.price;
                 return true;
@@ -119,9 +122,9 @@ function optimizeTeam(players) {
 
         // Upgrade players to use more budget
         let improved = true;
-        while (improved && totalCredits < MAX_BUDGET - MIN_REMAINING) {
+        while (improved && totalCredits < PLAYERS_BUDGET - MIN_REMAINING) {
             improved = false;
-            const remainingBudget = MAX_BUDGET - totalCredits;
+            const remainingBudget = PLAYERS_BUDGET - totalCredits;
 
             // Try to upgrade each player
             for (let i = 0; i < team.length; i++) {
@@ -151,7 +154,7 @@ function optimizeTeam(players) {
 
         // Try to add a coach with remaining budget
         let selectedCoach = null;
-        const remainingForCoach = 100 - totalCredits;
+        const remainingForCoach = MAX_BUDGET - totalCredits;
         if (team.length === TEAM_SIZE) {
             const affordableCoaches = coaches
                 .filter(c => c.price <= remainingForCoach)
@@ -171,7 +174,7 @@ function optimizeTeam(players) {
             price: player.price,
             fantasyPoints: player.stats.fantasy_avg_points,
             score: player.calculateScore(),
-            status: player.status
+            avgPoints: parseFloat(player.stats.avg_pts || 0).toFixed(1)
         }));
 
         return {
@@ -184,7 +187,7 @@ function optimizeTeam(players) {
                 score: selectedCoach.calculateScore()
             } : null,
             totalCredits: Math.round(totalCredits * 100) / 100,
-            remainingCredits: Math.round((100 - totalCredits) * 100) / 100
+            remainingCredits: Math.round((MAX_BUDGET - totalCredits) * 100) / 100
         };
 
     } catch (error) {
@@ -193,7 +196,7 @@ function optimizeTeam(players) {
             players: [],
             coach: null,
             totalCredits: 0,
-            remainingCredits: 100
+            remainingCredits: MAX_BUDGET
         };
     }
 }

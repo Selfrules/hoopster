@@ -2,7 +2,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const optimizeButton = document.querySelector('#optimizeButton');
     const resultsDiv = document.querySelector('#optimizedTeam');
     const matchdaySpan = document.querySelector('#matchday');
+    const maxCreditsInput = document.querySelector('#maxCredits');
     let currentMatchday = null;
+
+    // Validate max credits input
+    maxCreditsInput.addEventListener('change', (e) => {
+        let value = parseFloat(e.target.value);
+        if (value < 50) value = 50;
+        if (value > 100) value = 100;
+        e.target.value = value;
+    });
 
     // Fetch current matchday when page loads
     try {
@@ -35,7 +44,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
             
-            const response = await fetch(`/api/optimize?matchday=${currentMatchday}`, {
+            const maxCredits = parseFloat(maxCreditsInput.value);
+            const response = await fetch(`/api/optimize?matchday=${currentMatchday}&maxCredits=${maxCredits}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -82,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.team}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.price}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.score}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.avgPoints}</td>
             </tr>
         `).join('');
 
@@ -99,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${teamData.coach.team}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${teamData.coach.price}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${teamData.coach.score}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${teamData.coach.avgPoints}</td>
             </tr>
         ` : '';
 
@@ -123,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <div class="text-right">
                         <div class="text-sm font-medium text-gray-900">${player.price}</div>
-                        <div class="text-xs text-gray-500">Score: ${player.score}</div>
+                        <div class="text-xs text-gray-500">Avg: ${player.avgPoints}</div>
                     </div>
                 </div>
             </div>
@@ -147,7 +157,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <div class="text-right">
                         <div class="text-sm font-medium text-gray-900">${teamData.coach.price}</div>
-                        <div class="text-xs text-gray-500">Score: ${teamData.coach.score}</div>
+                        <div class="text-xs text-gray-500">Avg: ${teamData.coach.avgPoints}</div>
                     </div>
                 </div>
             </div>
@@ -183,7 +193,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Team</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Pts</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
