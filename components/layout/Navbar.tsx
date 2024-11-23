@@ -18,8 +18,8 @@ export function Navbar() {
           
           <div className="hidden md:flex items-center space-x-4">
             {[
-              { href: '/dashboard', label: 'Dashboard' },
-              { href: '/teams', label: 'My Teams' },
+              { href: '/team-generator', label: 'Team Generator' },
+              { href: '/schedule', label: 'Schedule' },
               { href: '/leaderboard', label: 'Leaderboard' },
             ].map(({ href, label }) => (
               <Link
@@ -34,12 +34,13 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center">
-            <button 
-              type="button"
+            <Link 
+              href="/team-generator"
+              legacyBehavior={false}
               className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
             >
               Create Team
-            </button>
+            </Link>
           </div>
         </div>
       </div>

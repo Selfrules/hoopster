@@ -10,4 +10,33 @@
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
+}
+
+/* Custom Range Input Styles */
+input[type="range"] {
+  @apply appearance-none bg-gray-200 h-2 rounded-lg;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  @apply appearance-none w-4 h-4 bg-indigo-600 rounded-full cursor-pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  @apply w-4 h-4 bg-indigo-600 border-0 rounded-full cursor-pointer;
+}
+
+/* Progress Bar Animation */
+.progress-bar-animate {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Dynamic Width Classes */
+.w-progress {
+  @apply transition-all duration-300;
+}
+
+@for i from 0 to 101 {
+  .w-[i%] {
+    width: percentage(i/100);
+  }
 } 

@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
+  //swcMinify: true,
   // This will suppress the hydration warnings
-  suppressHydrationWarning: true 
+  //suppressHydrationWarning: true 
 }
 
 module.exports = nextConfig 
