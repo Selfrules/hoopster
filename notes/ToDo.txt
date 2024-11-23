@@ -1,5 +1,0 @@
-- giocatori on fire
-- per gli allenatori tenere conto dei match (scontri), costa poco ma non gioca contro una squadra forte
-- classifica delle squadre più forti per fare match con giocatori e allenatori
-- mantenere i giocatori che funzionano bene, sostituire quelli che funzionano male
-- A parità di giocatore scegliere quello che gioca contro la squadra peggiore (o che difende peggio su quel ruolo)
