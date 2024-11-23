@@ -1,0 +1,125 @@
+/* Budget Manager Styles */
+.budget-manager {
+  @apply bg-white rounded-lg shadow-sm p-6 mb-6;
+}
+
+.budget-manager__header {
+  @apply flex justify-between items-center mb-4;
+}
+
+.budget-manager__title {
+  @apply text-lg font-semibold text-gray-900;
+}
+
+.budget-manager__controls {
+  @apply flex items-center space-x-4;
+}
+
+.budget-manager__range {
+  @apply w-32 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
+}
+
+.budget-manager__credits {
+  @apply text-sm font-medium text-gray-600;
+}
+
+.budget-manager__stats {
+  @apply space-y-2;
+}
+
+.budget-manager__stat-row {
+  @apply flex justify-between text-sm text-gray-600;
+}
+
+.budget-manager__stat-value {
+  @apply font-medium;
+}
+
+.budget-manager__stat-value--positive {
+  @apply text-green-500;
+}
+
+.budget-manager__stat-value--negative {
+  @apply text-red-500;
+}
+
+.budget-manager__progress {
+  @apply relative pt-1;
+}
+
+.budget-manager__progress-bar {
+  @apply overflow-hidden h-2 text-xs flex rounded bg-gray-100;
+}
+
+.budget-manager__progress-fill {
+  @apply h-full transition-all duration-300;
+}
+
+.budget-manager__progress-fill--positive {
+  @apply bg-green-500;
+}
+
+.budget-manager__progress-fill--negative {
+  @apply bg-red-500;
+}
+
+/* Position Tracker Styles */
+.position-tracker {
+  @apply bg-white rounded-lg shadow-sm p-6 mb-6;
+}
+
+.position-tracker__title {
+  @apply text-lg font-semibold text-gray-900 mb-4;
+}
+
+.position-tracker__grid {
+  @apply grid grid-cols-2 sm:grid-cols-4 gap-4;
+}
+
+.position-tracker__position {
+  @apply flex flex-col;
+}
+
+.position-tracker__header {
+  @apply flex justify-between items-center mb-2;
+}
+
+.position-tracker__label {
+  @apply text-sm font-medium text-gray-600;
+}
+
+.position-tracker__count {
+  @apply text-sm font-bold;
+}
+
+.position-tracker__count--complete {
+  @apply text-green-500;
+}
+
+.position-tracker__count--over {
+  @apply text-red-500;
+}
+
+.position-tracker__count--under {
+  @apply text-gray-900;
+}
+
+.position-tracker__progress {
+  @apply h-2 bg-gray-100 rounded-full overflow-hidden;
+}
+
+.position-tracker__progress-fill {
+  @apply h-full transition-all duration-300;
+}
+
+.position-tracker__progress-fill--complete {
+  @apply bg-green-500;
+}
+
+.position-tracker__progress-fill--over {
+  @apply bg-red-500;
+}
+
+.position-tracker__progress-fill--under {
+  @apply bg-blue-500;
+} 

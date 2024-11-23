@@ -22,36 +22,38 @@ interface PositionTrackerProps {
 export function PositionTracker({ currentCount, limits }: PositionTrackerProps) {
   const positions = ['Center', 'Forward', 'Guard', 'Coach'] as const;
 
+  const getProgressWidth = (current: number, limit: number) => {
+    return `${Math.min((current / limit) * 100, 100)}%`;
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Position Requirements</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div className="position-tracker">
+      <h3 className="position-tracker__title">Position Requirements</h3>
+      <div className="position-tracker__grid">
         {positions.map(position => (
-          <div key={position} className="flex flex-col">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-gray-600">{position}</span>
-              <span className={`text-sm font-bold ${
+          <div key={position} className="position-tracker__position">
+            <div className="position-tracker__header">
+              <span className="position-tracker__label">{position}</span>
+              <span className={`position-tracker__count ${
                 currentCount[position] === limits[position]
-                  ? 'text-green-500'
+                  ? 'position-tracker__count--complete'
                   : currentCount[position] > limits[position]
-                  ? 'text-red-500'
-                  : 'text-gray-900'
+                  ? 'position-tracker__count--over'
+                  : 'position-tracker__count--under'
               }`}>
                 {currentCount[position]}/{limits[position]}
               </span>
             </div>
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="position-tracker__progress">
               <div
-                className={`h-full transition-all duration-300 ${
+                className={`position-tracker__progress-fill ${
                   currentCount[position] === limits[position]
-                    ? 'bg-green-500'
+                    ? 'position-tracker__progress-fill--complete'
                     : currentCount[position] > limits[position]
-                    ? 'bg-red-500'
-                    : 'bg-blue-500'
+                    ? 'position-tracker__progress-fill--over'
+                    : 'position-tracker__progress-fill--under'
                 }`}
-                style={{
-                  width: `${Math.min((currentCount[position] / limits[position]) * 100, 100)}%`
-                }}
+                style={{ width: getProgressWidth(currentCount[position], limits[position]) }}
               />
             </div>
           </div>

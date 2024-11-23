@@ -1,129 +1,121 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { usePlayerData } from '../../hooks/usePlayerData';
+import { useTeamManagement } from '../../lib/hooks/useTeamManagement';
 import { BudgetManager } from './BudgetManager';
 import { PositionTracker } from './PositionTracker';
 import { PlayerFilters } from './PlayerFilters';
+import type { 
+  Player, 
+  PositionCount, 
+  PlayerFilters as PlayerFiltersType,
+  SortOption,
+  SortableField,
+  PositionName
+} from '../../lib/types';
+import { SORTABLE_FIELDS } from '../../lib/types';
 
 interface TeamCreationProps {
   leagueId: number;
   matchdayId: number;
 }
 
-const POSITION_LIMITS = {
+const POSITION_LIMITS: Record<PositionName, number> = {
   Center: 2,
   Forward: 4,
   Guard: 4,
   Coach: 1,
-};
+} as const;
 
 const TEAM_PLAYER_LIMIT = 3;
 
 export function TeamCreation({ leagueId, matchdayId }: TeamCreationProps) {
   const { players, isLoading, error } = usePlayerData(leagueId, matchdayId);
-  const [selectedPlayers, setSelectedPlayers] = useState<number[]>([]);
+  
   const [totalBudget, setTotalBudget] = useState(100);
-  const [sort, setSort] = useState('-quotation');
-  const [filters, setFilters] = useState({
+  const [sort, setSort] = useState<SortOption>('-quotation');
+  const [filters, setFilters] = useState<PlayerFiltersType>({
     position: '',
     onlyAvailable: false,
     onlyOnFire: false,
   });
 
-  const usedBudget = players
-    .filter(player => selectedPlayers.includes(player.id))
-    .reduce((sum, player) => sum + player.quotation, 0);
+  const teamManagement = useTeamManagement(players, {
+    maxBudget: totalBudget,
+    positionLimits: POSITION_LIMITS,
+    teamPlayerLimit: TEAM_PLAYER_LIMIT,
+  });
 
-  const positionCounts = selectedPlayers.reduce((counts, playerId) => {
-    const player = players.find(p => p.id === playerId);
+  const { selectedPlayers, togglePlayer } = teamManagement;
+
+  const usedBudget = selectedPlayers.reduce((sum, playerId) => {
+    const player = players.find((p: Player) => p.id === playerId);
+    return player ? sum + player.quotation : sum;
+  }, 0);
+
+  const positionCounts: PositionCount = selectedPlayers.reduce((counts, playerId) => {
+    const player = players.find((p: Player) => p.id === playerId);
     if (player) {
-      const position = player.position.name as keyof typeof POSITION_LIMITS;
+      const position = player.position.name as keyof PositionCount;
       counts[position] = (counts[position] || 0) + 1;
     }
     return counts;
-  }, {} as Record<string, number>);
+  }, { Center: 0, Forward: 0, Guard: 0, Coach: 0 });
 
   const teamCounts = selectedPlayers.reduce((counts, playerId) => {
-    const player = players.find(p => p.id === playerId);
-    if (player) {
-      counts[player.team.name] = (counts[player.team.name] || 0) + 1;
+    const player = players.find((p: Player) => p.id === playerId);
+    if (player?.team) {
+      const teamName = player.team.name;
+      counts[teamName] = (counts[teamName] || 0) + 1;
     }
     return counts;
   }, {} as Record<string, number>);
 
-  const handlePlayerToggle = useCallback((playerId: number, playerCost: number) => {
-    setSelectedPlayers(prev => {
-      const isSelected = prev.includes(playerId);
-      const player = players.find(p => p.id === playerId);
-      
-      if (!player) return prev;
-
-      const newSelection = isSelected
-        ? prev.filter(id => id !== playerId)
-        : [...prev, playerId];
-
-      const newPositionCounts = newSelection.reduce((counts, id) => {
-        const p = players.find(p => p.id === id);
-        if (p) {
-          const pos = p.position.name as keyof typeof POSITION_LIMITS;
-          counts[pos] = (counts[pos] || 0) + 1;
-        }
-        return counts;
-      }, {} as Record<string, number>);
-
-      if (!isSelected) {
-        if ((newPositionCounts[player.position.name] || 0) > POSITION_LIMITS[player.position.name as keyof typeof POSITION_LIMITS]) {
-          alert(`You can only have ${POSITION_LIMITS[player.position.name as keyof typeof POSITION_LIMITS]} ${player.position.name}(s)`);
-          return prev;
-        }
-
-        const teamCount = newSelection.filter(id => {
-          const p = players.find(p => p.id === id);
-          return p?.team.name === player.team.name;
-        }).length;
-
-        if (teamCount > TEAM_PLAYER_LIMIT) {
-          alert(`You can only have ${TEAM_PLAYER_LIMIT} players from the same team`);
-          return prev;
-        }
-
-        const newTotalCost = players
-          .filter(p => newSelection.includes(p.id))
-          .reduce((sum, p) => sum + p.quotation, 0);
-
-        if (newTotalCost > totalBudget) {
-          alert('This selection would exceed your budget limit!');
-          return prev;
-        }
-      }
-
-      return newSelection;
-    });
-  }, [players, totalBudget]);
-
   const filteredPlayers = players
-    .filter(player => {
+    .filter((player: Player) => {
       if (filters.position && player.position.name !== filters.position) return false;
       if (filters.onlyAvailable && player.is_injured) return false;
       if (filters.onlyOnFire && !player.is_on_fire) return false;
       return true;
     })
-    .sort((a, b) => {
-      const [field, order] = sort.startsWith('-') 
-        ? [sort.slice(1), -1] 
-        : [sort, 1];
-      return (a[field as keyof typeof a] - b[field as keyof typeof a]) * order;
+    .sort((a: Player, b: Player) => {
+      const direction = sort.startsWith('-') ? -1 : 1;
+      const field = sort.replace('-', '') as SortableField;
+      
+      if (!SORTABLE_FIELDS.includes(field)) return 0;
+      return ((a[field] as number) - (b[field] as number)) * direction;
     });
 
   if (isLoading) {
-    return <div className="text-center">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+          <p className="text-gray-600">Loading players...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-center text-red-500">Error: {error}</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center text-red-500">
+          <p className="text-lg font-semibold mb-2">Error loading players</p>
+          <p className="text-sm">{typeof error === 'string' ? error : 'Unknown error occurred'}</p>
+        </div>
+      </div>
+    );
   }
 
   if (!players || players.length === 0) {
-    return <div className="text-center">No players available.</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center text-gray-600">
+          <p className="text-lg font-semibold mb-2">No players available</p>
+          <p className="text-sm">Please check back later or try different filters</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -141,13 +133,13 @@ export function TeamCreation({ leagueId, matchdayId }: TeamCreationProps) {
 
       <PlayerFilters
         onSortChange={setSort}
-        onFilterChange={setFilters}
+        onFilterChange={(newFilters) => setFilters(prev => ({ ...prev, ...newFilters }))}
         currentSort={sort}
         currentFilters={filters}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredPlayers.map(player => {
+        {filteredPlayers.map((player) => {
           const isSelected = selectedPlayers.includes(player.id);
           
           return (
@@ -156,7 +148,7 @@ export function TeamCreation({ leagueId, matchdayId }: TeamCreationProps) {
               className={`player-card p-4 border rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer ${
                 isSelected ? 'ring-2 ring-indigo-500' : ''
               }`}
-              onClick={() => handlePlayerToggle(player.id, player.quotation)}
+              onClick={() => togglePlayer(player.id)}
             >
               <div className="flex justify-between items-start mb-2">
                 <h2 className="text-xl font-semibold">
