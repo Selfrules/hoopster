@@ -39,19 +39,14 @@ Hoopster is your AI-powered fantasy basketball team generator that helps you cre
 * Performance predictions
 * "On Fire" player tracking
 
-### 🎮 User Experience
-* Intuitive interface
-* Real-time updates
-* Player comparison tool
-* Alternative player suggestions
-
 ## 🚀 Getting Started
 
 ### Prerequisites
-* Node.js (v14 or higher)
+* Node.js (v18.17.0 or higher)
 * npm or yarn
+* Docker (optional, for containerized deployment)
 
-### Installation
+### Local Development
 
 1. Clone the repo
    ```sh
@@ -60,58 +55,86 @@ Hoopster is your AI-powered fantasy basketball team generator that helps you cre
 
 2. Install dependencies
    ```sh
-   npm install
-   # or
-   yarn install
+   npm ci
    ```
 
 3. Set up your environment variables
    ```sh
-   NEXT_PUBLIC_API_URL=your_api_url_here
-   NEXT_PUBLIC_API_TOKEN=your_api_token_here
+   cp .env.example .env.local
+   # Edit .env.local with your values
    ```
 
 4. Start the development server
    ```sh
    npm run dev
-   # or
-   yarn dev
    ```
+
+### 🐳 Docker Deployment
+
+1. Build the Docker image
+   ```sh
+   docker build -t hoopster .
+   ```
+
+2. Run the container
+   ```sh
+   docker run -p 3000:3000 hoopster
+   ```
+
+### 🌐 Deploy to Render.com
+
+1. Fork this repository
+
+2. Create a new Web Service on Render
+   - Connect your GitHub repository
+   - Select the `Docker` environment
+   - Choose the `starter` plan
+   - Select `frankfurt` region (or your preferred region)
+   - Set your environment variables:
+     ```
+     NODE_ENV=production
+     NEXT_PUBLIC_API_URL=your_api_url
+     NEXT_PUBLIC_API_TOKEN=your_api_token
+     NODE_VERSION=18.17.0
+     ```
+
+3. Deploy! Render will automatically:
+   - Build the Docker image
+   - Start the service
+   - Enable HTTPS
+   - Provide a deployment URL
+
+### 🔧 Troubleshooting Common Deployment Issues
+
+1. ESLint Errors
+   - The project includes a pre-configured `.eslintrc.json`
+   - Run `npm run lint` locally to catch issues before deployment
+   - Common fixes are included in the ESLint config
+
+2. Node.js Version Issues
+   - Ensure you're using Node.js v18.17.0 or higher
+   - The version is specified in `package.json` engines field
+   - Render.com will automatically use the correct version
+
+3. Build Cache Issues
+   - Clear Render.com build cache if you encounter stale builds
+   - Use `npm ci` instead of `npm install` for clean installs
+
+4. Environment Variables
+   - Double-check all required environment variables are set
+   - Use the correct format for API URLs (including https://)
+   - Ensure API tokens have the necessary permissions
 
 ## 🏗 Project Structure
 ```
 hoopster/
 ├── components/          # UI Components
-│   ├── layout/         # Layout components
-│   └── team-creation/  # Team generation components
 ├── lib/                # Utilities and hooks
-│   ├── hooks/         # Custom React hooks
-│   ├── config/        # Configuration files
-│   └── types.ts       # TypeScript types
-├── pages/             # Next.js pages
-├── public/            # Static assets
-├── styles/            # CSS styles
-└── store/            # State management
+├── pages/              # Next.js pages
+├── public/             # Static assets
+├── styles/             # CSS styles
+└── store/             # State management
 ```
-
-## 🎯 Usage
-
-1. Set your budget (90-110 credits)
-2. Choose your preferences:
-   * Prioritize "On Fire" players 🔥
-   * Balance team selection ⚖️
-   * Maximize playing probability 📈
-3. Click "Generate Optimal Team"
-4. Review and adjust your team
-5. Use the player comparison tool to optimize
-
-## 🤝 Contributing
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ## 📝 License
 
@@ -127,7 +150,7 @@ Website: [https://selfrules.org/](https://selfrules.org/)
 
 ---
 
-> Why did the basketball player take up gardening? 
-> Because he wanted to work on his plant defense! 🌱🏀
+> Why did the basketball player bring a ladder to practice? 
+> Because they heard they needed to work on their step-back jumper! 🪜🏀
 
 <img src="https://readme-jokes.vercel.app/api" alt="Jokes Card" />
