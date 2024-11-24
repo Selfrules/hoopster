@@ -1,18 +1,11 @@
 import React from 'react';
+import { PlayerFilters as PlayerFiltersType, PositionName } from '../../lib/types';
 
 interface PlayerFiltersProps {
   onSortChange: (field: string) => void;
-  onFilterChange: (filters: PlayerFilters) => void;
+  onFilterChange: (filters: PlayerFiltersType) => void;
   currentSort: string;
-  currentFilters: PlayerFilters;
-}
-
-interface PlayerFilters {
-  position?: string;
-  minCredits?: number;
-  maxCredits?: number;
-  onlyAvailable?: boolean;
-  onlyOnFire?: boolean;
+  currentFilters: PlayerFiltersType;
 }
 
 export function PlayerFilters({ onSortChange, onFilterChange, currentSort, currentFilters }: PlayerFiltersProps) {
@@ -43,14 +36,17 @@ export function PlayerFilters({ onSortChange, onFilterChange, currentSort, curre
           <select
             id="position"
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            value={currentFilters.position || ''}
-            onChange={(e) => onFilterChange({ ...currentFilters, position: e.target.value })}
+            value={currentFilters.position}
+            onChange={(e) => onFilterChange({ 
+              ...currentFilters, 
+              position: e.target.value as PositionName | '' 
+            })}
           >
             <option value="">All Positions</option>
             <option value="Center">Center</option>
             <option value="Forward">Forward</option>
             <option value="Guard">Guard</option>
-            <option value="Coach">Coach</option>
+            <option value="Head Coach">Head Coach</option>
           </select>
         </div>
 
@@ -60,7 +56,10 @@ export function PlayerFilters({ onSortChange, onFilterChange, currentSort, curre
               type="checkbox"
               className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
               checked={currentFilters.onlyAvailable}
-              onChange={(e) => onFilterChange({ ...currentFilters, onlyAvailable: e.target.checked })}
+              onChange={(e) => onFilterChange({ 
+                ...currentFilters, 
+                onlyAvailable: e.target.checked 
+              })}
             />
             <span className="ml-2 text-sm text-gray-600">Only Available Players</span>
           </label>
@@ -70,7 +69,10 @@ export function PlayerFilters({ onSortChange, onFilterChange, currentSort, curre
               type="checkbox"
               className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
               checked={currentFilters.onlyOnFire}
-              onChange={(e) => onFilterChange({ ...currentFilters, onlyOnFire: e.target.checked })}
+              onChange={(e) => onFilterChange({ 
+                ...currentFilters, 
+                onlyOnFire: e.target.checked 
+              })}
             />
             <span className="ml-2 text-sm text-gray-600">Only On Fire Players</span>
           </label>

@@ -13,7 +13,7 @@ export const useTeamStore = create<TeamStore>()(
   persist(
     (set) => ({
       selectedPlayers: [],
-      budget: 100,
+      budget: 110,
       filters: {
         position: '',
         onlyAvailable: false,

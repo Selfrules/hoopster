@@ -4,14 +4,14 @@ interface PositionLimits {
   Center: number;
   Forward: number;
   Guard: number;
-  Coach: number;
+  'Head Coach': number;
 }
 
 interface PositionCount {
   Center: number;
   Forward: number;
   Guard: number;
-  Coach: number;
+  'Head Coach': number;
 }
 
 interface PositionTrackerProps {
@@ -20,7 +20,7 @@ interface PositionTrackerProps {
 }
 
 export function PositionTracker({ currentCount, limits }: PositionTrackerProps) {
-  const positions = ['Center', 'Forward', 'Guard', 'Coach'] as const;
+  const positions = ['Center', 'Forward', 'Guard', 'Head Coach'] as const;
 
   const getProgressWidth = (current: number, limit: number) => {
     return `${Math.min((current / limit) * 100, 100)}%`;

@@ -22,7 +22,7 @@ export function BudgetManager({ totalBudget, usedBudget, onBudgetChange }: Budge
             id="budget-range"
             type="range"
             min={90}
-            max={100}
+            max={110}
             value={totalBudget}
             onChange={(e) => onBudgetChange(Number(e.target.value))}
             className="budget-manager__range"

@@ -1,13 +1,18 @@
-export const POSITIONS = ['Center', 'Forward', 'Guard', 'Coach'] as const;
+export const POSITIONS = ['Center', 'Forward', 'Guard', 'Head Coach'] as const;
 export type PositionName = (typeof POSITIONS)[number];
 
 export interface Position {
+  id: number;
   name: PositionName;
 }
 
 export interface Team {
+  id: number;
   name: string;
+  abbreviation: string;
 }
+
+export interface Opponent extends Team {}
 
 export const SORTABLE_FIELDS = [
   'quotation',
@@ -33,10 +38,8 @@ export interface Player {
   started_from_bench: boolean;
   probability_of_playing: number;
   popularity: number;
-  opponent?: {
-    abbreviation: string;
-  };
-  jersey: number;
+  opponent?: Opponent;
+  jersey: string;
 }
 
 export interface PositionCount extends Record<PositionName, number> {}
